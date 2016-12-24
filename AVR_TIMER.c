@@ -52,6 +52,18 @@ void AVR_TIMER_Enable_Mode_Normal(uint8_t timer_num, uint8_t timer_clock, uint8_
 			TCCR0B = timer_clock;
 			break;
 
+		case AVR_TIMER_8BIT_TIMER2:
+			//CLEAR MODE AND SET NORMAL MODE
+			TCCR2A = 0x00;
+			TCNT2 = 0x00;
+			if(interrupt_enable == AVR_TIMER_INTERRUPT_ON)
+			{
+				TIMSK2 |= (1 << TOIE2);
+			}
+			//APPLY CLOCK. START THE TIMER
+			TCCR2B = timer_clock;
+			break;
+
 		default:
 			break;
 	}
@@ -71,6 +83,15 @@ void AVR_TIMER_Enable_Mode_Ctc(uint8_t timer_num, uint8_t timer_clock)
 			TCNT0 = 0x00;
 			//APPLY CLOCK. START THE TIMER
 			TCCR0B |= timer_clock;
+			break;
+
+		case AVR_TIMER_8BIT_TIMER2:
+			//CLEAR MODE AND SET CTC MODE
+			TCCR2A = 0x02;
+			//CLEAR COUNT
+			TCNT2 = 0x00;
+			//APPLY CLOCK. START THE TIMER
+			TCCR2B |= timer_clock;
 			break;
 			
 		default:
@@ -92,6 +113,17 @@ void AVR_TIMER_Set_Oca_parameters(uint8_t timer_num, uint8_t oc_mode, uint8_t to
 			if(interrupt_enable == AVR_TIMER_INTERRUPT_ON)
 			{
 				TIMSK0 |= (1 << OCIE0A);
+			}
+			break;
+
+		case AVR_TIMER_8BIT_TIMER2:
+			//SET THE OC-A MODE 
+			TCCR2A |= (oc_mode << 6);
+			//SET THE TOP VALUE
+			OCR2A = top_value;
+			if(interrupt_enable == AVR_TIMER_INTERRUPT_ON)
+			{
+				TIMSK2 |= (1 << OCIE2A);
 			}
 			break;
 			
@@ -116,6 +148,17 @@ void AVR_TIMER_Set_Ocb_parameters(uint8_t timer_num, uint8_t oc_mode, uint8_t to
 				TIMSK0 |= (1 << OCIE0B);
 			}
 			break;
+
+		case AVR_TIMER_8BIT_TIMER2:
+			//SET THE OC-B MODE 
+			TCCR2A |= (oc_mode << 4);
+			//SET THE TOP VALUE
+			OCR2B = top_value;
+			if(interrupt_enable == AVR_TIMER_INTERRUPT_ON)
+			{
+				TIMSK2 |= (1 << OCIE2B);
+			}
+			break;
 			
 		default:
 			break;
@@ -132,6 +175,10 @@ uint8_t AVR_TIMER_Get_Flag_Value(uint8_t timer_num, uint8_t timer_flag)
 			return (((TIFR0 & timer_flag) != 0)? 1 : 0);
 			break;
 		
+		case AVR_TIMER_8BIT_TIMER2:
+			return (((TIFR2 & timer_flag) != 0)? 1 : 0);
+			break;
+		
 		default:
 			break;
 	}
@@ -141,11 +188,17 @@ uint8_t AVR_TIMER_Get_Flag_Value(uint8_t timer_num, uint8_t timer_flag)
 void AVR_TIMER_Clear_Flag(uint8_t timer_num, uint8_t timer_flag)
 {
 	//CLEAR THE SPECIFIED FLAG OF THE SPECIFIED TIMER
+	//TO CLEAR THE TIMER FLAG, WE HAVE TO WRITE 1 TO THE
+	//FLAG POSITION
 
 	switch(timer_num)
 	{
 		case AVR_TIMER_8BIT_TIMER0:
 			TIFR0 |= timer_flag;
+			break;
+
+		case AVR_TIMER_8BIT_TIMER2:
+			TIFR2 |= timer_flag;
 			break;
 		
 		default:
@@ -171,6 +224,16 @@ void AVR_TIMER_Disable(uint8_t timer_num)
 			TIMSK0 = 0;
 			break;
 		
+		case AVR_TIMER_8BIT_TIMER2:
+			TCCR2A = 0x00;
+			//STOP CLOCK TO TIMER
+			TCCR2B = 0x00;
+			//CLEAR COUNT
+			TCNT2 = 0;
+			//DISABLE INTERRUPT
+			TIMSK2 = 0;
+			break;
+
 		default:
 			break;
 	}
