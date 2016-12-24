@@ -3,10 +3,16 @@
 //
 // ONLY IMPLEMENTS THE FOLLOWING TIMER MODES:
 //	1. NORMAL (TOP = MAX = 0xFF)
+//		IN NORMAL MODE, INTERRUPT/FLAG IS AT TOP VALUE
+//		OF MAX. OPTIONALLY INTERRUPT/FLAGS CAN BE SET
+//		FOR THE 2 OUTPUT COMPARE CHANNELS A & B
 //		--- OCA (OPTIONAL)
 //		--- OCB (OPTIONAL)
 //		--- INTERRUPTS POSSIBLE : OVF, OCA, OCB
 //	2. CLEAR TIMER ON COMPARE (CTC) (TOP = OCRA)
+//		IN CTC MODE, TOP = OCRA. THE TIMER COUNT RESETS
+//		AFTER REACHING THIS VALUE. THE INTERRUPT/FLAG IS
+//		SET ONLY FOR THIS EVENT. NO OVERFLOW EVENT
 //		--- OCA (REQUIRED)
 //      --- INTERRUPTS POSSIBLE : OCA
 //
@@ -18,6 +24,20 @@
 //
 // ONLY SUPPORTS THE FOLLOWING CLOCK SOURCES:
 //	1. INTERNAL (FROM IO CLOCK)
+//
+//	EXAMPLE USAGE:
+//		* ALWAYS SET THE OC A/B CHANNELS BEFORE SETTING
+//		  THE NORMAL / CTC MODES. SETTING THESE MODES
+//		  STARTS THE TIMER TO OC A/B SHOULD BE SET BEFORE
+//		  HAND
+//	
+//	AVR_TIMER_Set_Oca_parameters(AVR_TIMER_8BIT_TIMER0, AVR_TIMER_OPMODE_OC_TOGGLE, 100, AVR_TIMER_INTERRUPT_ON);
+//	AVR_TIMER_Set_Ocb_parameters(AVR_TIMER_8BIT_TIMER0, AVR_TIMER_OPMODE_OC_TOGGLE, 200, AVR_TIMER_INTERRUPT_ON);
+//	AVR_TIMER_Enable_Mode_Normal(AVR_TIMER_8BIT_TIMER0, AVR_TIMER_TIM0_CLOCK_PRESCALE_NONE, AVR_TIMER_INTERRUPT_ON);
+//
+//	AVR_TIMER_Ctc_Set_Oca_parameters(AVR_TIMER_8BIT_TIMER0, AVR_TIMER_OPMODE_CTC_TOGGLE, 200,AVR_TIMER_INTERRUPT_ON);
+//	AVR_TIMER_Enable_Mode_Ctc(AVR_TIMER_8BIT_TIMER0, AVR_TIMER_TIM0_CLOCK_PRESCALE_NONE);
+//
 //
 // DECEMBER 22, 2016
 //
@@ -48,6 +68,13 @@
 #define AVR_TIMER_TIM0_CLOCK_PRESCALE_256	0x04
 #define AVR_TIMER_TIM0_CLOCK_PRESCALE_1024	0x05
 
+#define AVR_TIMER_TIM1_CLOCK_DISABLE		0x00
+#define AVR_TIMER_TIM1_CLOCK_PRESCALE_NONE	0x01
+#define AVR_TIMER_TIM1_CLOCK_PRESCALE_8		0x02
+#define AVR_TIMER_TIM1_CLOCK_PRESCALE_64	0x03
+#define AVR_TIMER_TIM1_CLOCK_PRESCALE_256	0x04
+#define AVR_TIMER_TIM1_CLOCK_PRESCALE_1024	0x05
+
 #define AVR_TIMER_TIM2_CLOCK_DISABLE		0x00
 #define AVR_TIMER_TIM2_CLOCK_PRESCALE_NONE	0x01
 #define AVR_TIMER_TIM2_CLOCK_PRESCALE_8		0x02
@@ -66,8 +93,8 @@
 
 void AVR_TIMER_Enable_Mode_Normal(uint8_t timer_num, uint8_t timer_clock, uint8_t interrupt_enable);
 void AVR_TIMER_Enable_Mode_Ctc(uint8_t timer_num, uint8_t timer_clock);
-void AVR_TIMER_Set_Oca_parameters(uint8_t timer_num, uint8_t oc_mode, uint8_t top_value, uint8_t interrupt_enable);
-void AVR_TIMER_Set_Ocb_parameters(uint8_t timer_num, uint8_t oc_mode, uint8_t top_value, uint8_t interrupt_enable);
+void AVR_TIMER_Set_Oca_parameters(uint8_t timer_num, uint8_t oc_mode, uint16_t top_value, uint8_t interrupt_enable);
+void AVR_TIMER_Set_Ocb_parameters(uint8_t timer_num, uint8_t oc_mode, uint16_t top_value, uint8_t interrupt_enable);
 uint8_t AVR_TIMER_Get_Flag_Value(uint8_t timer_num, uint8_t timer_flag);
 void AVR_TIMER_Clear_Flag(uint8_t timer_num, uint8_t timer_flag);
 void AVR_TIMER_Disable(uint8_t timer_num);
