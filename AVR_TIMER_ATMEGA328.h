@@ -46,8 +46,8 @@
 // ANKIT.BHATNAGARINDIA@GMAIL.COM
 ///////////////////////////////////////////////////////
 
-#ifndef _AVR_TIMER_H_
-#define _AVR_TIMER_H_
+#ifndef _AVR_TIMER_ATMEGA328_H_
+#define _AVR_TIMER_ATMEGA328_H_
 
 
 #include <stdio.h>
