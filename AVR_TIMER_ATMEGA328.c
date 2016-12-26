@@ -46,7 +46,7 @@
 // ANKIT.BHATNAGARINDIA@GMAIL.COM
 ///////////////////////////////////////////////////////
 
-#include "AVR_TIMER.h"
+#include "AVR_TIMER_ATMEGA328.h"
 
 void AVR_TIMER_Enable_Mode_Normal(uint8_t timer_num, uint8_t timer_clock, uint8_t interrupt_enable)
 {
