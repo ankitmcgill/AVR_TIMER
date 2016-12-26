@@ -1,5 +1,6 @@
 ///////////////////////////////////////////////////////
 // AVR TIMER LIBRARY
+// FOR ATMEGAxx8 SERIES
 //
 // ONLY IMPLEMENTS THE FOLLOWING TIMER MODES:
 //	1. NORMAL (TOP = MAX = 0xFF)
